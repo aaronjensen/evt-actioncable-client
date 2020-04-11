@@ -1,25 +1,27 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import {useQuery} from 'react-query'
 
 function App() {
+  const {status, data} = useQuery('counts', () => fetch('http://localhost:3000/counts')
+    .then(response => response.json()))
+
+  if (status !== 'success') {
+    return <div>{status}</div>
+  }
+
+
+  const counts = data.data
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ul>
+      {counts.map(({id, value}) =>
+        <li>
+          id: {id}, value: {value}
+        </li>
+      )}
+    </ul>
   );
 }
 
