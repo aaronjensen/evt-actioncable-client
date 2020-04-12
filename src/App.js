@@ -13,12 +13,15 @@ const Count = ({id, value}) => {
   })
   const [decrement] = useMutation(() => fetch(`http://localhost:3000/counts/${id}?decrement=1`, {method: 'PUT'}))
   const [newValue, setNewValue] = useState()
+
   useActionCable(
     {channel: 'CountChannel', countId: id},
-    {received: data => {
-      console.log(performance.now() - now)
-      setNewValue(data.value)
-    }}
+    {
+      received: data => {
+        console.log(performance.now() - now)
+        setNewValue(data.value)
+      }
+    }
   )
 
   return <tr>
