@@ -5,6 +5,7 @@ import {ActionCableProvider, useActionCable} from 'use-action-cable'
 
 const Count = ({id, value}) => {
   const [increment] = useMutation(() => fetch(`http://localhost:3000/counts/${id}`, {method: 'PUT'}))
+  const [decrement] = useMutation(() => fetch(`http://localhost:3000/counts/${id}?decrement=1`, {method: 'PUT'}))
   const [newValue, setNewValue] = useState()
   useActionCable(
     {channel: 'CountChannel', countId: id},
@@ -13,6 +14,7 @@ const Count = ({id, value}) => {
 
   return <li>
     id: {id}, value: {newValue || value}
+    <button type="button" style={{marginLeft: 10}} onClick={decrement}>-</button>
     <button type="button" style={{marginLeft: 10}} onClick={increment}>+</button>
   </li>
 }
