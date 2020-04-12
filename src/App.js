@@ -29,7 +29,7 @@ const Count = ({id, value}) => {
       {id}
     </td>
     <td style={{width: 100, textAlign: 'right'}}>
-      {newValue || value}
+      {newValue ?? value}
     </td>
     <td>
       <button type="button" style={{marginLeft: 10, padding: 10}} onClick={decrement}>-</button>
