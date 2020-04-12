@@ -4,14 +4,15 @@ import {useQuery, useMutation} from 'react-query'
 import {ActionCableProvider, useActionCable} from 'use-action-cable'
 
 let now = performance.now()
+const host = "localhost:3000"
 
 const Count = ({id, value}) => {
   const [increment] = useMutation(() => {
     now = performance.now()
 
-    return fetch(`http://localhost:3000/counts/${id}`, {method: 'PUT'})
+    return fetch(`//${host}/counts/${id}`, {method: 'PUT'})
   })
-  const [decrement] = useMutation(() => fetch(`http://localhost:3000/counts/${id}?decrement=1`, {method: 'PUT'}))
+  const [decrement] = useMutation(() => fetch(`//${host}/counts/${id}?decrement=1`, {method: 'PUT'}))
   const [newValue, setNewValue] = useState()
 
   useActionCable(
@@ -39,7 +40,7 @@ const Count = ({id, value}) => {
 }
 
 function App() {
-  const {status, data} = useQuery('counts', () => fetch('http://localhost:3000/counts')
+  const {status, data} = useQuery('counts', () => fetch(`//${host}/counts`)
     .then(response => response.json()))
 
   if (status !== 'success') {
@@ -49,7 +50,7 @@ function App() {
   const counts = data.data
 
   return (
-    <ActionCableProvider url="http://localhost:3000/cable">
+    <ActionCableProvider url={`http://${host}/cable`}>
       <table style={{margin: 20}}>
         <thead>
           <tr>
