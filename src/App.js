@@ -1,7 +1,21 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useState} from 'react';
 import './App.css';
-import {useQuery} from 'react-query'
+import {useQuery, useMutation} from 'react-query'
+import {ActionCableProvider, useActionCable} from 'use-action-cable'
+
+const Count = ({id, value}) => {
+  const [increment] = useMutation(() => fetch(`http://localhost:3000/counts/${id}`, {method: 'PUT'}))
+  const [newValue, setNewValue] = useState()
+  useActionCable(
+    {channel: 'CountChannel', countId: id},
+    {received: data => setNewValue(data.value)}
+  )
+
+  return <li>
+    id: {id}, value: {newValue || value}
+    <button type="button" style={{marginLeft: 10}} onClick={increment}>+</button>
+  </li>
+}
 
 function App() {
   const {status, data} = useQuery('counts', () => fetch('http://localhost:3000/counts')
@@ -11,17 +25,14 @@ function App() {
     return <div>{status}</div>
   }
 
-
   const counts = data.data
 
   return (
-    <ul>
-      {counts.map(({id, value}) =>
-        <li>
-          id: {id}, value: {value}
-        </li>
-      )}
-    </ul>
+    <ActionCableProvider url="http://localhost:3000/cable">
+      <ul>
+        {counts.map(({id, value}) => <Count id={id} value={value} key={id} />)}
+      </ul>
+    </ActionCableProvider>
   );
 }
 
